@@ -94,4 +94,4 @@ function Generate-Manifest
     echo 'generating package.xml'
     $BLANK_MAN.save("$path\package.xml")
 }
-#Export-ModuleMember -Function Generate-Manifest
+    Export-ModuleMember -Function Generate-Manifest

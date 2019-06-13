@@ -52,6 +52,7 @@ function Generate-Manifest
     }
 
     New-Item -Path "$path\package.xml" -Force > $null
+    $resolvedPath = Resolve-Path "$path\package.xml"
 
     [System.Collections.ArrayList] $regexClassList = $regexClass.Split(',')
     [System.Collections.ArrayList] $regexTriggerList = $regexTrigger.Split(',')
@@ -102,6 +103,6 @@ function Generate-Manifest
     }
     
     echo 'generating package.xml'
-    $BLANK_MAN.save("$path\package.xml")
+    $BLANK_MAN.save($resolvedPath)
 }
     Export-ModuleMember -Function Generate-Manifest

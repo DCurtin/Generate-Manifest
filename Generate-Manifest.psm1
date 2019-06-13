@@ -3,7 +3,9 @@
     param(
     [string]$name='',
     [string]$member='',
-    [XML]$manifest=$null
+    [XML]$manifest=$null,
+    [Parameter(Mandatory=$true)]
+    [string]$targetusername=''
     )
     
     if($manifest -eq $null)
@@ -49,9 +51,9 @@ function Generate-Manifest
 
     echo 'querying class names'
 
-    [System.Collections.ArrayList] $classNames = sfdx force:data:soql:query -q "SELECT Name FROM ApexClass" -r csv -u 'dcurtin@midlandira.com'
+    [System.Collections.ArrayList] $classNames = sfdx force:data:soql:query -q "SELECT Name FROM ApexClass" -r csv -u $targetusername
     $classNames.RemoveAt(0)#remove header
-    [System.Collections.ArrayList] $triggerNames = sfdx force:data:soql:query -q "SELECT Name FROM ApexTrigger" -r csv -u 'dcurtin@midlandira.com'
+    [System.Collections.ArrayList] $triggerNames = sfdx force:data:soql:query -q "SELECT Name FROM ApexTrigger" -r csv -u $targetusername
     $triggerNames.RemoveAt(0)#remove header
     
     [XML]$BLANK_MAN='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>

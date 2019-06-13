@@ -3,9 +3,7 @@
     param(
     [string]$name='',
     [string]$member='',
-    [XML]$manifest=$null,
-    [Parameter(Mandatory=$true)]
-    [string]$targetusername=''
+    [XML]$manifest=$null
     )
     
     if($manifest -eq $null)
@@ -32,7 +30,9 @@ function Generate-Manifest
     param(
     [string]$regexClass='',
     [string]$regexTrigger='',
-    [string]$path=$(pwd)
+    [string]$path=$(pwd),
+    [Parameter(Mandatory=$true)]
+    [string]$targetusername=''
     )
 
     if($regexClass -eq '' -and $regexTrigger -eq '')

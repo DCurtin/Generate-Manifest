@@ -1,13 +1,22 @@
 ﻿function addElementsToManifest($name, $member, $manifest)
 {
-    $types_element = $manifest.CreateElement('types', "http://soap.sforce.com/2006/04/metadata")
+
+    #echo "$name, $member, $manifest"
     
+    if($manifest -eq $null)
+    {
+        return
+    }
+
+
+    $types_element = $manifest.CreateElement('types', "http://soap.sforce.com/2006/04/metadata")
+
     $types_members_element = $manifest.CreateElement('members', 'http://soap.sforce.com/2006/04/metadata')
-    $types_members_element.InnerText=$member
+    $types_members_element.InnerText=$member > $null
     $types_element.AppendChild($types_members_element)
     
     $types_name_element = $manifest.CreateElement('name', 'http://soap.sforce.com/2006/04/metadata')
-    $types_name_element.InnerText=$name
+    $types_name_element.InnerText=$name > $null
     $types_element.AppendChild($types_name_element)
     
     $manifest.Package.AppendChild($types_element)
@@ -15,12 +24,14 @@
 function Generate-Manifest
 {
     param(
-    [string]$regexClass=$null,
-    [string]$regexTrigger=$null
+    [string]$regexClass='',
+    [string]$regexTrigger='',
+    [string]$path='.'
     )
 
+    New-Item -Path "$path\+package.xml" -Force > $null
 
-    if($regexClass -eq $null -and $regexTrigger -eq $null)
+    if($regexClass -eq '' -and $regexTrigger -eq '')
     {
         echo 'Please provide at least one argument: Generate-Manfiest -regexClass "\w*test$" or Generate-Manfiest -regexTrigger "\w*triggerendswiththis$"' 
         return
@@ -39,31 +50,33 @@ function Generate-Manifest
     
     echo 'Starting Package Creation'
 
-    if($regexClass -ne $null)
+    if($regexClass -eq '')
     {
         $classNames.ForEach(
             {
                 if($_ -match $regexClass)
-                {
-                    addElementsToManifest('ApexClass', $_, $BLANK_MAN)
+                { 
+                    #echo "ApexClass, $_, $BLANK_MAN"
+                    addElementsToManifest 'ApexClass' $_ $BLANK_MAN
                 }
             }
         )
     }
 
-    if($regexTrigger -ne $null)
+    if($regexTrigger -eq '')
     {
         $triggerNames.ForEach(
             {
                 if($_ -match $regexTrigger)
                 {
-                    addElementsToManifest('ApexTrigger', $_, $BLANK_MAN)
+                    #echo "ApexTrigger, $_, $BLANK_MAN"
+                    addElementsToManifest 'ApexTrigger' $_ $BLANK_MAN
                 }
             }
         )
     }
     
     echo 'generating package.xml'
-    $BLANK_MAN.save('C:\users\dcurtin\package.xml')
+    $BLANK_MAN.save("$path\package.xml")
 }
 #Export-ModuleMember -Function Generate-Manifest

@@ -31,9 +31,16 @@ function Generate-Manifest
     [string]$regexClass='',
     [string]$regexTrigger='',
     [string]$path=$(pwd),
-    [Parameter(Mandatory=$true)]
-    [string]$targetusername=''
+    [string]$targetusername
     )
+
+    if($targetusername -eq '' -or $targetusername -eq $null)
+    {
+        echo "Please provide a username or org alias name for -targetusername
+        e.g. dcurtin@midlandira.com [assuming this is the username used to authenticate to an org]
+             DevHub                 [assuming this is a defined alias for an org]
+             Use sfdx force:org:list to get a list of org aliases"
+    }
 
     if($regexClass -eq '' -and $regexTrigger -eq '')
     {

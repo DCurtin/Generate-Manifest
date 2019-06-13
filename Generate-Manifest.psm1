@@ -44,9 +44,10 @@ function Generate-Manifest
 
     if($regexClass -eq '' -and $regexTrigger -eq '')
     {
-        echo "`nPlease provide at least one argument `n`n e.g.`tGenerate-Manifest -regexClass '^Trail\w*test$'`t [begins with Trail ends with test]
-        Generate-Manifest -regexTrigger 'testString$'`t [begins with anything, ends with testString]
-        Generate-Manifest -regexClass 'test,merge'`t`t [any class with test or merge in it's name]"
+        echo "`nPlease provide at least one argument
+        e.g. Generate-Manifest -regexClass '^Trail\w*test$'`t [begins with Trail ends with test]
+             Generate-Manifest -regexTrigger 'testString$'`t [begins with anything, ends with testString]
+             Generate-Manifest -regexClass 'test,merge'`t`t [any class with test or merge in it's name]"
         return
     }
 

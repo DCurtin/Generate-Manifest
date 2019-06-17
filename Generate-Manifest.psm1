@@ -68,7 +68,7 @@ function Generate-Manifest
     [System.Collections.ArrayList] $triggerNames = sfdx force:data:soql:query -q "SELECT Name FROM ApexTrigger" -r csv -u $targetusername
     $triggerNames.RemoveAt(0)#remove header
     [System.Collections.ArrayList] $pageNames = sfdx force:data:soql:query -q "SELECT Name FROM ApexPage" -r csv -u $targetusername
-    $triggerNames.RemoveAt(0)#remove header
+    $pageNames.RemoveAt(0)#remove header
     
     [XML]$BLANK_MAN='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <Package xmlns="http://soap.sforce.com/2006/04/metadata">

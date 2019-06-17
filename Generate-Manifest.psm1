@@ -30,6 +30,7 @@ function Generate-Manifest
     param(
     [string]$regexClass='',
     [string]$regexTrigger='',
+    [string]$regexPage='',
     [string]$path=$(pwd),
     [string]$targetusername
     )
@@ -40,14 +41,16 @@ function Generate-Manifest
         e.g. dcurtin@midlandira.com [assuming this is the username used to authenticate to an org]
              DevHub                 [assuming this is a defined alias for an org]
              Use sfdx force:org:list to get a list of org aliases"
+        return
     }
 
-    if($regexClass -eq '' -and $regexTrigger -eq '')
+    if($regexClass -eq '' -and $regexTrigger -eq '' -and $regexPage -eq '')
     {
         echo "`nPlease provide at least one argument
         e.g. Generate-Manifest -regexClass '^Trail\w*test$'`t [begins with Trail ends with test]
              Generate-Manifest -regexTrigger 'testString$'`t [begins with anything, ends with testString]
-             Generate-Manifest -regexClass 'test,merge'`t`t [any class with test or merge in it's name]"
+             Generate-Manifest -regexClass 'test,merge'`t`t [any class with test or merge in it's name]
+             Generate-Manifest -regexPage 'test,merge'`t`t [any page with test or merge in it's name]"
         return
     }
 
@@ -56,13 +59,15 @@ function Generate-Manifest
 
     [System.Collections.ArrayList] $regexClassList = $regexClass.Split(',')
     [System.Collections.ArrayList] $regexTriggerList = $regexTrigger.Split(',')
+    [System.Collections.ArrayList] $regexPageList = $regexPage.Split(',')
 
-
-    echo 'querying class names'
+    echo 'querying names'
 
     [System.Collections.ArrayList] $classNames = sfdx force:data:soql:query -q "SELECT Name FROM ApexClass" -r csv -u $targetusername
     $classNames.RemoveAt(0)#remove header
     [System.Collections.ArrayList] $triggerNames = sfdx force:data:soql:query -q "SELECT Name FROM ApexTrigger" -r csv -u $targetusername
+    $triggerNames.RemoveAt(0)#remove header
+    [System.Collections.ArrayList] $pageNames = sfdx force:data:soql:query -q "SELECT Name FROM ApexPage" -r csv -u $targetusername
     $triggerNames.RemoveAt(0)#remove header
     
     [XML]$BLANK_MAN='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -97,6 +102,21 @@ function Generate-Manifest
                 { 
                     #echo "ApexClass, $_, $BLANK_MAN"
                     addElementsToManifest 'ApexTrigger' $trigger $BLANK_MAN
+                }
+            }
+        }
+    }
+
+    if($regexPageList[0] -ne '')
+    {
+        foreach($page in $pageNames)
+        {
+            foreach($regex in $regexPageList)
+            {
+                if($page -match $regex)
+                { 
+                    #echo "ApexClass, $_, $BLANK_MAN"
+                    addElementsToManifest 'ApexPage' $page $BLANK_MAN
                 }
             }
         }
